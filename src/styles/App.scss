@@ -67,7 +67,7 @@ body {
 
   input {
     padding: 0.5em;
-    margin-right: 2em;
+    // margin-right: 2em;
     width: 40%;
     border-radius: 6px;
     border: none;
@@ -271,10 +271,11 @@ body {
 
     .search {
       display: flex;
-      justify-content: space-between;
+      gap: 2rem;
+      // justify-content: space-between;
       // margin: 0 2em;
       input {
-        width: 65%;
+        width: 85%;
         height: 2.3em;
         // font-size: 16px;
       }

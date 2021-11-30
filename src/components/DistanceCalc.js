@@ -16,11 +16,13 @@ const toRad = (Value) => {
     return Value * Math.PI / 180;
 }
 
+
 export const locationsDistance = (placeInfo, lat, long) => {
-    const newArr = placeInfo.map((item) => {
+    let distanceInfoList = placeInfo.map((item) => {
         let distance = calcCrow(lat, long, item.extraData.geometry.location.lat, item.extraData.geometry.location.lng)
         item = { ...item, distance: distance }
         return item
     })
-    return newArr
+    distanceInfoList.sort((place1, place2) => place1.distance - place2.distance)
+    return distanceInfoList
 }

@@ -78,7 +78,6 @@ body {
 
 .Input input {
   padding: 0.5em;
-  margin-right: 2em;
   width: 40%;
   border-radius: 6px;
   border: none;
@@ -345,12 +344,10 @@ body {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    -webkit-box-pack: justify;
-        -ms-flex-pack: justify;
-            justify-content: space-between;
+    gap: 2rem;
   }
   .Input .search input {
-    width: 65%;
+    width: 85%;
     height: 2.3em;
   }
 }
