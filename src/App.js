@@ -3,21 +3,27 @@ import Results from './components/Results';
 import ChipHeader from './components/ChipHeader';
 import './styles/App.css';
 import db from './firebase';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { HerokuRequest } from './components/HerokuRequest';
+import { placeDataRecoil, placeLoading } from './atoms';
+
+import { collection, onSnapshot } from "firebase/firestore";
+import { useSetRecoilState } from 'recoil';
 
 const App = () => {
-  const [placeData, setData] = useState([]);
-  const [loading, setloading] = useState(true);
+
+  const setPlaceData = useSetRecoilState(placeDataRecoil)
+  const setLoading = useSetRecoilState(placeLoading)
+
 
   useEffect(() => {
-    db.collection('reviews').orderBy('average', 'desc').onSnapshot(snapshot => {
-      setData(snapshot.docs.map(doc => doc.data()))
-      setloading(false)
-    })
-  }, [loading])
+    onSnapshot(collection(db, "reviews"), (collection) => {
+      setPlaceData(collection.docs.map(doc => doc.data()))
+      setLoading(false)
+    });
+  }, [setLoading, setPlaceData])
 
-  // Initial Heroku Request as load time is slow when there is no requests for a long period of time.
+
   useEffect(() => {
     HerokuRequest()
   }, []);
@@ -25,12 +31,11 @@ const App = () => {
   return (
     <div className="App">
       <header className="Header">
-        <Input placeData={placeData} loading={loading} />
+        <Input />
         <ChipHeader />
       </header>
-      <Results placeData={placeData} loading={loading} />
+      <Results />
     </div>
   );
 }
-
 export default App;

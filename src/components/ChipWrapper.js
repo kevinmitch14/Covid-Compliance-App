@@ -1,13 +1,13 @@
 import React from 'react'
 import Chip from '@material-ui/core/Chip';
-import { onRemove, onSelect } from '../slices/chips';
-import { useDispatch, useSelector } from 'react-redux';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { activeCategories, userPosition } from '../atoms';
 
 const ChipWrapper = ({ label }) => {
+    const [activeCat, setActiveCategories] = useRecoilState(activeCategories)
 
-    const dispatch = useDispatch()
-    const state = useSelector(state => state.chip)
+    const setUserCoords = useSetRecoilState(userPosition)
 
 
     return (
@@ -15,10 +15,42 @@ const ChipWrapper = ({ label }) => {
             <Chip
                 label={label}
                 clickable
-                onClick={() => { dispatch(onSelect(label)) }}
-                style={state.values[label].active ? { fontSize: '16px', backgroundColor: '#35b999' } : { fontSize: '16px', backgroundColor: '#04363d', color: 'white', border: '1px solid white' }}
+                onClick={() => {
+                    if (activeCat.includes(label)) return
+                    if (label === "Nearby") {
+                        navigator.geolocation.getCurrentPosition((position) => {
+                            setUserCoords(position.coords)
+                        })
+                    }
+                    if (label === "Nearby" && activeCat.includes("Most Reviewed")) {
+                        let mostReviewedIndex = activeCat.indexOf("Most Reviewed")
+                        let newArr = [...activeCat]
+                        newArr.splice(mostReviewedIndex, 1)
+                        setActiveCategories([...newArr])
+                        setActiveCategories([...newArr, label])
+                        return
+                    }
 
-                onDelete={() => { dispatch(onRemove(label)) }}
+                    if (label === "Most Reviewed" && activeCat.includes("Nearby")) {
+                        let nearbyIndex = activeCat.indexOf("Nearby")
+                        let newArr = [...activeCat]
+                        newArr.splice(nearbyIndex, 1)
+                        setActiveCategories([...newArr])
+                        setActiveCategories([...newArr, label])
+                        return
+                    }
+                    else {
+                        setActiveCategories((prevState) => [...prevState, label])
+                    }
+                }}
+                style={activeCat.includes(label) ? { fontSize: '16px', backgroundColor: '#35b999' } : { fontSize: '16px', backgroundColor: '#04363d', color: 'white', border: '1px solid white' }}
+                onDelete={() => {
+                    let restIndex = activeCat.indexOf(label)
+                    if (restIndex === -1) return
+                    let newState = [...activeCat]
+                    newState.splice(restIndex, 1)
+                    setActiveCategories(newState)
+                }}
                 deleteIcon={<HighlightOffIcon />}
                 size={'medium'}
             />
